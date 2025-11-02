@@ -3,3 +3,5 @@ reports
 node_modules
 *.csv
 test
+*.txt
+*.xlsx
