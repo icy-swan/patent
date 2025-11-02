@@ -115,7 +115,8 @@ def process_row(row):
         sub_classes_in_block = [sc for mg, sc in parts_list]
         N = len(set(sub_classes_in_block)) # N = 小类去重后的种类数量
         n = len(set(main_groups_in_block)) # n = 大组去重后的种类数量
-
+        
+        # *** 修改点：应用新公式 q = N + 1 - (1/n) ***
         # 因为 parts_list 非空, n 必定 >= 1, 不会触发 ZeroDivisionError
         q2 = N + 1 - (1 / n)
         
@@ -144,9 +145,11 @@ def main():
     """
     主执行函数
     """
+    # --- 请修改这里 ---
     input_file = root_dir + '/res/上市公司发明申请专利分类号.xlsx'
     output_csv = root_dir + '/result/上市公司发明申请专利分类号_proce.csv'
     output_excel = root_dir + '/result/上市公司发明申请专利分类号_proce.xlsx'
+    # --- 修改结束 ---
 
     print(f"开始加载文件: {input_file}")
     start_time = time.time()
