@@ -315,14 +315,14 @@ def main():
     file_utility = os.path.join(res_dir, '上市公司实用新型申请专利分类号.xlsx')
     
     # 输出文件路径 (6个)
-    out_inv_merged = os.path.join(result_dir, 'task1-上市公司&子公司发明申请专利分类号_proce.xlsx')
-    out_inv_listed = os.path.join(result_dir, 'task1-上市公司本身发明申请专利分类号_proce.xlsx')
+    out_inv_merged = os.path.join(result_dir, '上市公司&子公司发明申请专利分类号_proce.xlsx')
+    out_inv_listed = os.path.join(result_dir, '上市公司本身发明申请专利分类号_proce.xlsx')
     
-    out_util_merged = os.path.join(result_dir, 'task1-上市公司&子公司实用新型申请专利分类号_proce.xlsx')
-    out_util_listed = os.path.join(result_dir, 'task1-上市公司本身实用新型申请专利分类号_proce.xlsx')
+    out_util_merged = os.path.join(result_dir, '上市公司&子公司实用新型申请专利分类号_proce.xlsx')
+    out_util_listed = os.path.join(result_dir, '上市公司本身实用新型申请专利分类号_proce.xlsx')
     
-    out_comb_merged = os.path.join(result_dir, 'task1-上市公司&子公司发明&实用申请专利分类号_proce.xlsx')
-    out_comb_listed = os.path.join(result_dir, 'task1-上市公司本身发明&实用申请专利分类号_proce.xlsx')
+    out_comb_merged = os.path.join(result_dir, '上市公司&子公司发明&实用申请专利分类号_proce.xlsx')
+    out_comb_listed = os.path.join(result_dir, '上市公司本身发明&实用申请专利分类号_proce.xlsx')
 
     print(f"--- 专利处理 v7 启动 (已修复专利块重复计算问题) ---")
     print(f"根目录: {root_dir}")
