@@ -3,7 +3,7 @@ import re
 from collections import Counter
 import time
 from tqdm import tqdm
-import os # 引入 os 模块来创建文件夹
+import os 
 
 # --- 核心函数1: 提取专利部分 (无需修改) ---
 def extract_patent_parts(patent_num_str):
@@ -34,24 +34,36 @@ def extract_patent_parts(patent_num_str):
     sub_class = main_group[:4]
     return main_group, sub_class
 
-# --- 核心函数2: 处理单行 (v6 重构: 参数化) ---
+# --- 核心函数2: 处理单行 (v7 更新: 增加专利块去重) ---
 def process_row(row, patent_cols, summary_col_name):
     """
     处理DataFrame的单行数据。
     (v6: 专利列 和 汇总列名 通过参数传入)
+    (v7: 增加 {} 块级别去重)
     """
-    # patent_cols = [f'发明申请{c}类' for c in 'ABCDEFGH'] # v5的硬编码
-    # v6: 使用传入的 patent_cols 列表
     
-    full_patent_string = ""
+    # v7 新逻辑:
+    all_blocks_content_list = []
+    raw_full_string_for_summary = "" # 用于保存到汇总列的原始字符串
+    
     for col in patent_cols:
         if col in row.index and pd.notna(row[col]):
-            full_patent_string += str(row[col])
+            cell_content = str(row[col])
+            # 1. 仍然保存原始的、未去重的字符串，用于汇总列（保持v6行为）
+            raw_full_string_for_summary += cell_content
+            # 2. 提取所有 {内容} 并添加到总列表
+            all_blocks_content_list.extend(re.findall(r'\{(.*?)\}', cell_content))
 
-    # 存入汇总列 (v6: 使用传入的 summary_col_name)
-    row[summary_col_name] = full_patent_string
+    # 保存原始汇总字符串
+    row[summary_col_name] = raw_full_string_for_summary
 
-    if not full_patent_string:
+    # --- 核心去重 ---
+    # 使用 dict.fromkeys 保持顺序并去重
+    # (例如, ['A', 'B', 'A'] 变为 ['A', 'B'])
+    unique_blocks_content = list(dict.fromkeys(all_blocks_content_list))
+
+    # v7 new check: 检查去重后的列表是否为空
+    if not unique_blocks_content:
         row['方法1-专利质量列表'] = []
         row['方法2-小类数量列表'] = []
         row['方法2-大组数量列表'] = []
@@ -59,7 +71,8 @@ def process_row(row, patent_cols, summary_col_name):
         row['方法3-专利大组分类计数'] = {}
         return row
 
-    patent_blocks_content = re.findall(r'\{(.*?)\}', full_patent_string)
+    # v6 old logic (was error prone):
+    # patent_blocks_content = re.findall(r'\{(.*?)\}', full_patent_string)
 
     method1_q_list = []
     method2_N_list = []
@@ -67,7 +80,9 @@ def process_row(row, patent_cols, summary_col_name):
     method2_q_list = []
     all_main_groups_for_row = []
 
-    for block_content in patent_blocks_content:
+    # v7 new loop: 
+    # *** 遍历去重后的专利块内容 ***
+    for block_content in unique_blocks_content:
         patent_num_strings = block_content.split(';')
         parts_list = []
         
@@ -143,7 +158,7 @@ def load_data(file_path):
     print(f"文件加载完毕，耗时: {load_time - start_time:.2f} 秒。共 {len(df)} 行数据。")
     return df
 
-# --- 核心函数3: 专利处理流水线 (v6 重构) ---
+# --- 核心函数3: 专利处理流水线 (v6 重构, v7 无需修改) ---
 def run_processing_task(
     input_df, 
     data_prefixes, 
@@ -281,7 +296,7 @@ def run_processing_task(
         except Exception as e_save_listed:
             print(f"❌ [{task_name}-分支2] 保存 '上市公司本身' 文件失败: {e_save_listed}")
 
-# --- 核心函数4: 主调度函数 (v6 新增) ---
+# --- 核心函数4: 主调度函数 (v6 新增, v7 无需修改) ---
 def main():
     """
     (v6 新增): 主执行函数 - 调度中心
@@ -309,7 +324,7 @@ def main():
     out_comb_merged = os.path.join(result_dir, 'task1-上市公司&子公司发明&实用申请专利分类号_proce.xlsx')
     out_comb_listed = os.path.join(result_dir, 'task1-上市公司本身发明&实用申请专利分类号_proce.xlsx')
 
-    print(f"--- 专利处理 v6 启动 ---")
+    print(f"--- 专利处理 v7 启动 (已修复专利块重复计算问题) ---")
     print(f"根目录: {root_dir}")
     print(f"结果目录: {result_dir}")
     start_time_all = time.time()
