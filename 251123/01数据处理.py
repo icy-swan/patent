@@ -322,7 +322,7 @@ def main():
     out_util_listed = os.path.join(result_dir, '上市公司本身绿色实用新型申请专利分类号_proce.xlsx')
     
     out_comb_merged = os.path.join(result_dir, '上市公司&子公司绿色发明&实用申请专利分类号_proce.xlsx')
-    out_comb_listed = os.path.join(result_dir, '上市公司本身绿色&实用申请专利分类号_proce.xlsx')
+    out_comb_listed = os.path.join(result_dir, '上市公司本身绿色发明&实用申请专利分类号_proce.xlsx')
 
     print(f"--- 专利处理 v7 启动 (已修复专利块重复计算问题) ---")
     print(f"根目录: {root_dir}")
